@@ -6,9 +6,16 @@ module.exports = function check(str, bracketsConfig) {
 	let bracketsOpen = []; 
 	let bracketsClose = [];
 
-	function searchFirstClosedBracket(beginPos, arr, arrClose) {
-		for (let i=beginPos; i<arr.length; i++) {
-			if (arrClose.indexOf(arr[i]) !== -1) return i;
+	function searchFirstClosedBracket(beginPos, arr, arrClose, arrOpen) {
+		for (let i=beginPos+1; i<arr.length; i++) {
+			if (arrClose.indexOf(arr[i]) !== -1) {
+				if(checkBracketsEqual(arr[i], arrOpen, arrClose)
+					&& arr[i] !== arr[beginPos]) {
+					return searchFirstClosedBracket(i, arr, arrClose, arrOpen);
+				}
+
+				return i;
+			}
 		}
 	}
 
@@ -16,6 +23,12 @@ module.exports = function check(str, bracketsConfig) {
 		for (let i=0; i<arr.length; i++) {
 			if (arr[i][0] === openBracket && arr[i][1] === closeBracket) return true;		
 		}
+		return false;
+	}
+
+	function checkBracketsEqual(closeBreak, arrOpen, arrClose) {
+		let posCloseArr = arrClose.indexOf(closeBreak);
+		if (closeBreak === arrOpen[posCloseArr]) return true;
 		return false;
 	}
 
@@ -29,7 +42,7 @@ module.exports = function check(str, bracketsConfig) {
 		if (beginBracket === null) continue;
 		if (bracketsOpen.indexOf(beginBracket) === -1) return false;
 
-		let currentClose = searchFirstClosedBracket(i, strArr, bracketsClose);
+		let currentClose = searchFirstClosedBracket(i, strArr, bracketsClose, bracketsOpen);
 		let checkedBracket = strArr[2*currentClose-i-1];
 
 		if (!checkBracketsPair(beginBracket, checkedBracket, bracketsConfig)) return false;
@@ -42,35 +55,6 @@ module.exports = function check(str, bracketsConfig) {
 		if (item !== null) return false;
 	});
 
-	return true;
-	
-
+	return true;  
   
-   /* for (let i=0; i<bracketsConfig.length; i++) {
-
-
-
-	    let sign1 = bracketsConfig[i][0];
-	    let sign2 = bracketsConfig[i][1];
-	    let reg = new RegExp("(\\" 
-	  	        + sign1 
-	  	        + "+(\.{0}|\.{2,})\\" 
-	  	        + sign2 
-	  	        + "+)+");
-
-	    if(!reg.test(str)) return false;
-
-	    let regErr = new RegExp("(\\" 
-	  	        + sign2 
-	  	        + "+\\" 
-	  	        + sign1 
-	  	        + "+)+");
-
-	    if(regErr.test(str)) return false;
-    }
-
-    return true;*/
-  /*let rez = str.match(reg);
-  if (rez === str) return true;
-  return false;*/
 }
