@@ -32,6 +32,18 @@ module.exports = function check(str, bracketsConfig) {
 		return false;
 	}
 
+	function getCheckedBracket(current, start) {//arr
+		let numberCloseBracket = 2*current-start-1; 
+		let checkedBracket = strArr[numberCloseBracket];
+
+		/*if(bracketsOpen.indexOf(checkedBracket)) {
+			current = numberCloseBracket;////////
+			return getCheckedBracket(current, start);
+		}*/
+
+		return numberCloseBracket;
+	}
+
 	bracketsConfig.forEach((item) => {
 		bracketsOpen.push(item[0]);
 		bracketsClose.push(item[1]);
@@ -43,7 +55,13 @@ module.exports = function check(str, bracketsConfig) {
 		if (bracketsOpen.indexOf(beginBracket) === -1) return false;
 
 		let currentClose = searchFirstClosedBracket(i, strArr, bracketsClose, bracketsOpen);
-		let checkedBracket = strArr[2*currentClose-i-1];
+		/////
+
+		let checkedNum = getCheckedBracket(currentClose, i);
+		let checkedBracket = strArr[checkedNum];
+
+		
+		//////
 
 		if (!checkBracketsPair(beginBracket, checkedBracket, bracketsConfig)) return false;
 
